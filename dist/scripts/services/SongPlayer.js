@@ -4,12 +4,6 @@
         var SongPlayer = {};
         
         /**
-        * @desc holds the contents of the current album object including title, artist, label, yeay, albumArtUrl, and an array of song objects each with a title, duration, and audioUrl.
-        * @type {Object}
-        */
-        var currentAlbum = Fixtures.getAlbum();
-        
-        /**
         * @desc Buzz object audio file
         * @type {Object}
         */
@@ -22,16 +16,22 @@
         */
         
         var setSong = function(song) {
+            
+            // 1. Check to see if there's a current buzz object
             if (currentBuzzObject) {
+                // 2. If there is, stop it from playing
                 currentBuzzObject.stop();
                 SongPlayer.currentSong.playing = null;
             }
  
+            
+            // 3. Create  a new buzz sound instance for the song
             currentBuzzObject = new buzz.sound(song.audioUrl, {
                 formats: ['mp3'],
                 preload: true
             });
  
+            // 4. Set the current song to this song
             SongPlayer.currentSong = song;
         };
         
@@ -45,6 +45,16 @@
             song.playing = true;
         };
         
+         /**
+        * @function stopSong
+        * @desc stops currentBuzzObject and sets the boolean value of the song's playing method to null
+        * @param {Object} song
+        */
+        var stopSong = function(song){
+            currentBuzzObject.stop();
+            song.playing = null;
+        };
+        
         
         /**
         * @function getSongIndex
@@ -52,8 +62,14 @@
         * @param {Object} song
         */
         var getSongIndex = function(song) {
-            return currentAlbum.songs.indexOf(song);
+            return SongPlayer.currentAlbum.songs.indexOf(song);
         }
+        
+        /**
+        * @desc holds the contents of the current album object including title, artist, label, year, albumArtUrl, and an array of song objects each with a title, duration, and audioUrl.
+        * @type {Object}
+        */
+        SongPlayer.currentAlbum = Fixtures.getAlbum();
         
         /**
         * @desc Holds the currently playing song data
@@ -63,12 +79,14 @@
 
         /**
         * @function SongPlayer.play
-        * @desc handles playing the music when the play button is clicked.
+        * @desc When the currently playing song is not the song we want to play, we should set and play the provided song.  Otherwise, we should pause the currently playing song.
         * @param {Object} song
         */
         SongPlayer.play = function(song) {
             song = song || SongPlayer.currentSong;
             console.log(getSongIndex(song));
+            
+            
             if (SongPlayer.currentSong !== song) {
                 setSong(song);
                 playSong(song);
@@ -100,13 +118,32 @@
             currentSongIndex--;
             
             if (currentSongIndex < 0) {
-                currentBuzzObject.stop();
-                SongPlayer.currentSong.playing = null;
-            } else {
-                var song = currentAlbum.songs[currentSongIndex];
-                setSong(song);
-                playSong(song);
+                currentSongIndex = SongPlayer.currentAlbum.songs.length - 1;
             }
+            
+            var song = SongPlayer.currentAlbum.songs[currentSongIndex];
+            
+            stopSong(SongPlayer.currentSong);
+            setSong(song);
+            playSong(song);
+        };
+        
+        /**
+        * @function SongPlayer.next
+        * @desc increments the index of the current song by one and plays the next track in the album
+        */
+        SongPlayer.next = function() {
+            var currentSongIndex = getSongIndex(SongPlayer.currentSong);
+            currentSongIndex++;
+            
+            if (currentSongIndex === SongPlayer.currentAlbum.songs.length) {
+                currentSongIndex = 0
+            } 
+            
+            var song = SongPlayer.currentAlbum.songs[currentSongIndex];
+            stopSong(SongPlayer.currentSong);
+            setSong(song);
+            playSong(song);
         };
         
         return SongPlayer;
