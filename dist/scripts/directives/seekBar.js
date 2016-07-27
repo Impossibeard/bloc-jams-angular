@@ -15,7 +15,9 @@
             templateUrl: '/templates/directives/seek_bar.html',
             replace: true,
             restrict: 'E',
-            scope: { },
+            scope: { 
+                onChange: '&'
+            },
             link: function(scope, element, attributes){
                 //Holds the value of the seek bar, such as the currently playing song time or the current volume. Default value is 0.
                 scope.value = 0;
@@ -25,6 +27,14 @@
                 
                 //Holds the element that matches the directive (<seek-bar>) as a jQuery object so we can call jQuery methods on it.
                 var seekBar = $(element);
+                
+                attributes.$observe('value', function(newValue){
+                   scope.value = newValue; 
+                });
+                
+                attributes.$observe('max', function(newValue){
+                    scope.max = newValue;
+                });
                 
                 //A function that calculates a percent based on the value and maximum value of a seek bar.
                 var percentString = function () {
@@ -48,6 +58,7 @@
                 scope.onClickSeekBar = function(event) {
                     var percent = calculatePercent(seekBar, event);
                     scope.value = percent * scope.max;
+                    notifyOnChange(scope.value);
                 };
                 
                 //Similar to scope.onClickSeekBar, but uses $apply to constantly apply the change in value of scope.value as the user drags the seek bar thumb.
@@ -56,6 +67,7 @@
                         var percent = calculatePercent(seekBar, event);
                         scope.$apply(function() {
                             scope.value = percent * scope.max;
+                            notifyOnChange(scope.value);
                         });
                     });
  
@@ -64,6 +76,12 @@
                         $document.unbind('mouseup.thumb');
                     });
                 };
+                
+                var notifyOnChange = function(newValue) {
+                    if (typeof scope.onChange === 'function') {
+                        scope.onChange({value: newValue});
+                    }
+                }
                 
             }
             

@@ -14,7 +14,6 @@
         * @desc Stops currently playing song and loads new audio file as currentBuzzObject
         * @param {Object} song
         */
-        
         var setSong = function(song) {
             
             // 1. Check to see if there's a current buzz object
@@ -77,6 +76,12 @@
         */
         SongPlayer.currentSong = null;
 
+        /**
+        * @desc Current playback time (in seconds) of currently playing song
+        * @type {Number}
+        */
+        SongPlayer.currentTime = null;
+        
         /**
         * @function SongPlayer.play
         * @desc When the currently playing song is not the song we want to play, we should set and play the provided song.  Otherwise, we should pause the currently playing song.
@@ -145,6 +150,17 @@
             setSong(song);
             playSong(song);
         };
+        
+        /**
+        * @function setCurrentTime
+        * @desc Set current time (in seconds) of currently playing song
+        * @param {Number} time
+        */
+        SongPlayer.setCurrentTime = function(time) {
+            if (currentBuzzObject){
+                currentBuzzObject.setTime(time);
+            }
+        }
         
         return SongPlayer;
     }
