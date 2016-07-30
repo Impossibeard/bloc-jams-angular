@@ -28,11 +28,11 @@
                 //Holds the element that matches the directive (<seek-bar>) as a jQuery object so we can call jQuery methods on it.
                 var seekBar = $(element);
                 
-                attributes.$observe('value', function(newValue){
-                   scope.value = newValue; 
+                attributes.$observe('value', function(newValue) {
+                    scope.value = newValue;
                 });
-                
-                attributes.$observe('max', function(newValue){
+ 
+                attributes.$observe('max', function(newValue) {
                     scope.max = newValue;
                 });
                 
@@ -81,7 +81,7 @@
                     if (typeof scope.onChange === 'function') {
                         scope.onChange({value: newValue});
                     }
-                }
+                };
                 
             }
             
