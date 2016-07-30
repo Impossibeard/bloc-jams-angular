@@ -89,6 +89,12 @@
         SongPlayer.currentTime = null;
         
         /**
+        * @desc Current volume of song player
+        * @type {Number}
+        */
+        SongPlayer.volume = null;
+        
+        /**
         * @function SongPlayer.play
         * @desc When the currently playing song is not the song we want to play, we should set and play the provided song.  Otherwise, we should pause the currently playing song.
         * @param {Object} song
@@ -167,6 +173,12 @@
                 currentBuzzObject.setTime(time);
             }
         };
+        
+        SongPlayer.setVolume = function(volume) {
+            if (currentBuzzObject){
+                currentBuzzObject.setVolume(volume);
+            }
+        }
         
         return SongPlayer;
     }
